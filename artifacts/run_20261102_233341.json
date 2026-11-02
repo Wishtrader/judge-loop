@@ -1,0 +1,354 @@
+{
+  "timestamp": "20261102_233341",
+  "total_cost_usd": 0.006725,
+  "wall_elapsed_s": 23.17,
+  "approved": 7,
+  "total": 15,
+  "runs": [
+    {
+      "task": "t01_slugify",
+      "worker": "meta-llama/llama-3.3-70b-instruct",
+      "worker_vendor": "meta",
+      "judge": "google/gemini-2.5-flash",
+      "judge_vendor": "google",
+      "cross_vendor": true,
+      "gate": "TESTS-FAIL",
+      "tests": {
+        "passed": 7,
+        "total": 8,
+        "ok": false,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 3,
+        "robustness": 3,
+        "clarity": 4
+      },
+      "judge_reason": "Функция не обрабатывает юникод-буквы, что приводит к некорректной работе с нелатинскими символами.",
+      "cost_usd": 0.000396,
+      "code": "import re\n\ndef slugify(text: str) -> str:\n    if not text:\n        return ''\n    text = text.lower()\n    text = re.sub(r'[^a-z0-9]+', '-', text)\n    text = text.strip('-')\n    return text"
+    },
+    {
+      "task": "t02_duration",
+      "worker": "google/gemini-2.5-flash-lite",
+      "worker_vendor": "google",
+      "judge": "openai/gpt-4o-mini",
+      "judge_vendor": "openai",
+      "cross_vendor": true,
+      "gate": "JUDGE-REJECT",
+      "tests": {
+        "passed": 13,
+        "total": 13,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 3,
+        "clarity": 4
+      },
+      "judge_reason": "Код не обрабатывает случаи с некорректными единицами, например, '1x', что может привести к ошибкам.",
+      "cost_usd": 0.000419,
+      "code": "import re\n\ndef parse_duration(text: str) -> int:\n    \"\"\"\n    Парсит строку длительности и возвращает количество секунд.\n\n    Поддерживаемые единицы: h (часы), m (минуты), s (секунды).\n    Порядок единиц произвольный.\n\n    Args:\n        text: Строка длительности (например, '1h30m', '90s', '2h', '45m', '1h2m3s').\n\n    Returns:\n        Общее количество секунд в виде целого числа.\n\n    Raises:\n        ValueError: Если строка пустая или не соответствует формату.\n    \"\"\"\n    if not text:\n        raise ValueError(\"Input string cannot be empty.\")\n\n    total_seconds = 0\n    # Регулярное выражение для поиска чисел с единицами измерения\n    # Оно ищет последовательности цифр, за которыми следует 'h', 'm' или 's'\n    # Например: '1h', '30m', '90s'\n    matches = re.findall(r'(\\d+)([hms])', text)\n\n    if not matches:\n        raise ValueError(f\"Invalid duration format: {text}\")\n\n    # Проверяем, что вся строка была разобрана\n    parsed_length = sum(len(num) + len(unit) for num, unit in matches)\n    if parsed_length != len(text):\n        raise ValueError(f\"Invalid duration format: {text}\")\n\n    for value, unit in matches:\n        try:\n            num_value = int(value)\n        except ValueError:\n            # Это маловероятно из-за регулярного выражения, но для полноты\n            raise ValueError(f\"Invalid number format in duration: {value}\")\n\n        if unit == 'h':\n            total_seconds += num_value * 3600\n        elif unit == 'm':\n            total_seconds += num_value * 60\n        elif unit == 's':\n            total_seconds += num_value\n        else:\n            # Это также маловероятно из-за регулярного выражения\n            raise ValueError(f\"Unknown unit: {unit}\")\n\n    return total_seconds"
+    },
+    {
+      "task": "t01_slugify",
+      "worker": "google/gemini-2.5-flash-lite",
+      "worker_vendor": "google",
+      "judge": "openai/gpt-4o-mini",
+      "judge_vendor": "openai",
+      "cross_vendor": true,
+      "gate": "TESTS-FAIL",
+      "tests": {
+        "passed": 6,
+        "total": 8,
+        "ok": false,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 2,
+        "robustness": 2,
+        "clarity": 3
+      },
+      "judge_reason": "Функция не обрабатывает случай, когда входной текст равен None, что приводит к ошибке.",
+      "cost_usd": 0.000279,
+      "code": "import re\n\ndef slugify(text: str) -> str:\n    if not text:\n        return \"\"\n\n    # Приводим к нижнему регистру\n    text = text.lower()\n\n    # Заменяем последовательности не-буквенно-цифровых символов на один дефис\n    # Используем \\W+ для замены любых не-буквенно-цифровых символов (включая пробелы, знаки препинания и т.д.)\n    # Юникод-буквы сохраняются благодаря флагу re.UNICODE\n    text = re.sub(r'[^\\w\\s-]', '', text, flags=re.UNICODE)\n    text = re.sub(r'[\\s-]+', '-', text, flags=re.UNICODE)\n\n    # Убираем дефисы в начале и конце\n    text = text.strip('-')\n\n    # Если после всех преобразований строка стала пустой (например, исходная строка состояла только из не-буквенно-цифровых символов)\n    if not text:\n        return \"\"\n\n    return text"
+    },
+    {
+      "task": "t01_slugify",
+      "worker": "openai/gpt-4o-mini",
+      "worker_vendor": "openai",
+      "judge": "deepseek/deepseek-chat",
+      "judge_vendor": "deepseek",
+      "cross_vendor": true,
+      "gate": "TESTS-FAIL",
+      "tests": {
+        "passed": 7,
+        "total": 8,
+        "ok": false,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 3,
+        "robustness": 3,
+        "clarity": 4
+      },
+      "judge_reason": "Код работает для большинства случаев, но не учитывает юникод-буквы в регулярном выражении.",
+      "cost_usd": 0.000313,
+      "code": "import re\n\ndef slugify(text: str) -> str:\n    if not text or not text.strip():\n        return ''\n    text = text.lower()\n    text = re.sub(r'[^a-zA-Z0-9]+', '-', text)\n    return text.strip('-')"
+    },
+    {
+      "task": "t02_duration",
+      "worker": "anthropic/claude-haiku-5.5",
+      "worker_vendor": "anthropic",
+      "judge": "deepseek/deepseek-chat",
+      "judge_vendor": "deepseek",
+      "cross_vendor": true,
+      "gate": "TESTS-FAIL",
+      "tests": {
+        "passed": 0,
+        "total": 1,
+        "ok": false,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 1,
+        "robustness": 1,
+        "clarity": 1
+      },
+      "judge_reason": "Код не завершён и не соответствует спецификации функции.",
+      "cost_usd": 0.000718,
+      "code": "import re\n\n_FULL_RE = re.compile(r'(?:[0-9]+[hms])+')\n_TOKEN_RE = re.compile(r'([0-9]+)([hms])')\n_MULTIPLIERS = {'h': 3600, 'm': 60, 's': 1}\n\n\ndef parse_duration(text: str) -> int:\n    if not isinstance(text, str) or not _FULL"
+    },
+    {
+      "task": "t01_slugify",
+      "worker": "anthropic/claude-haiku-5.5",
+      "worker_vendor": "anthropic",
+      "judge": "deepseek/deepseek-chat",
+      "judge_vendor": "deepseek",
+      "cross_vendor": true,
+      "gate": "JUDGE-REJECT",
+      "tests": {
+        "passed": 8,
+        "total": 8,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 3,
+        "robustness": 3,
+        "clarity": 4
+      },
+      "judge_reason": "Код работает корректно, но не обрабатывает пустую строку и строки только из символов в соответствии с заданием.",
+      "cost_usd": 0.000429,
+      "code": "import re\n\n\ndef slugify(text: str) -> str:\n    lowered = text.lower()\n    replaced = re.sub(r'[\\W_]+', '-', lowered)\n    return replaced.strip('-')"
+    },
+    {
+      "task": "t01_slugify",
+      "worker": "deepseek/deepseek-chat",
+      "worker_vendor": "deepseek",
+      "judge": "google/gemini-2.5-flash",
+      "judge_vendor": "google",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 8,
+        "total": 8,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 4,
+        "robustness": 3,
+        "clarity": 4
+      },
+      "judge_reason": "Функция в целом корректна, но не обрабатывает некоторые краевые случаи с символами, которые могут быть частью слова в других языках, и неявно предполагает, что вход всегда будет строкой.",
+      "cost_usd": 0.000539,
+      "code": "import re\n\ndef slugify(text: str) -> str:\n    if not text:\n        return ''\n    text = text.lower()\n    text = re.sub(r'[^a-zа-яё0-9]+', '-', text)\n    text = text.strip('-')\n    return text"
+    },
+    {
+      "task": "t03_backoff",
+      "worker": "anthropic/claude-haiku-5.5",
+      "worker_vendor": "anthropic",
+      "judge": "deepseek/deepseek-chat",
+      "judge_vendor": "deepseek",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 6,
+        "total": 6,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 5,
+        "clarity": 5
+      },
+      "judge_reason": "Код полностью соответствует спецификации и проходит все тесты.",
+      "cost_usd": 0.000349,
+      "code": "def backoff_delays(n: int, base: float = 1.0, factor: float = 2.0, cap: float = 60.0) -> list[float]:\n    if n <= 0:\n        return []\n    delays: list[float] = []\n    current = float(base)\n    for _ in range(n):\n        delays.append(float(min(current, cap)))\n        current *= factor\n    return delays"
+    },
+    {
+      "task": "t02_duration",
+      "worker": "openai/gpt-4o-mini",
+      "worker_vendor": "openai",
+      "judge": "deepseek/deepseek-chat",
+      "judge_vendor": "deepseek",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 13,
+        "total": 13,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 5,
+        "clarity": 4
+      },
+      "judge_reason": "Код корректно решает задачу, обрабатывает краевые случаи и читаем, но можно улучшить читаемость за счёт более явного разделения логики.",
+      "cost_usd": 0.000442,
+      "code": "def parse_duration(text: str) -> int:\n    if not text or not all(c.isdigit() or c in 'hms' for c in text):\n        raise ValueError(\"Invalid duration format\")\n    \n    total_seconds = 0\n    current_value = ''\n    \n    for char in text:\n        if char.isdigit():\n            current_value += char\n        elif char in 'hms':\n            if not current_value:\n                raise ValueError(\"Invalid duration format\")\n            if char == 'h':\n                total_seconds += int(current_value) * 3600\n            elif char == 'm':\n                total_seconds += int(current_value) * 60\n            elif char == 's':\n                total_seconds += int(current_value)\n            current_value = ''\n        else:\n            raise ValueError(\"Invalid duration format\")\n    \n    if current_value:\n        raise ValueError(\"Invalid duration format\")\n    \n    return total_seconds"
+    },
+    {
+      "task": "t03_backoff",
+      "worker": "google/gemini-2.5-flash-lite",
+      "worker_vendor": "google",
+      "judge": "openai/gpt-4o-mini",
+      "judge_vendor": "openai",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 6,
+        "total": 6,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 4,
+        "clarity": 4
+      },
+      "judge_reason": "Код корректно решает задачу, но не обрабатывает случаи с отрицательными значениями для base, factor и cap.",
+      "cost_usd": 0.000284,
+      "code": "def backoff_delays(n: int, base: float = 1.0, factor: float = 2.0, cap: float = 60.0) -> list[float]:\n    \"\"\"\n    Возвращает список из n задержек в секундах для повторных попыток.\n\n    Args:\n        n: Количество задержек для генерации.\n        base: Начальное значение задержки.\n        factor: Множитель для экспоненциального роста задержки.\n        cap: Максимальное значение задержки.\n\n    Returns:\n        Список задержек в секундах.\n    \"\"\"\n    if n <= 0:\n        return []\n\n    delays = []\n    current_delay = float(base)\n    for _ in range(n):\n        delay_to_add = min(current_delay, float(cap))\n        delays.append(delay_to_add)\n        current_delay *= factor\n    return delays"
+    },
+    {
+      "task": "t03_backoff",
+      "worker": "meta-llama/llama-3.3-70b-instruct",
+      "worker_vendor": "meta",
+      "judge": "google/gemini-2.5-flash",
+      "judge_vendor": "google",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 6,
+        "total": 6,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 4,
+        "clarity": 4
+      },
+      "judge_reason": "Код корректно реализует экспоненциальный backoff с учетом ограничения сверху, но не обрабатывает некорректные значения base/factor/cap, как указано в задании.",
+      "cost_usd": 0.000464,
+      "code": "def backoff_delays(n: int, base: float = 1.0, factor: float = 2.0, cap: float = 60.0) -> list[float]:\n    if n <= 0:\n        return []\n    delays = []\n    current_delay = base\n    for _ in range(n):\n        delays.append(min(current_delay, cap))\n        current_delay *= factor\n    return delays"
+    },
+    {
+      "task": "t03_backoff",
+      "worker": "openai/gpt-4o-mini",
+      "worker_vendor": "openai",
+      "judge": "deepseek/deepseek-chat",
+      "judge_vendor": "deepseek",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 6,
+        "total": 6,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 5,
+        "clarity": 4
+      },
+      "judge_reason": "Код полностью соответствует спецификации и проходит все тесты, но можно улучшить читаемость, убяза избыточное приведение к float.",
+      "cost_usd": 0.000371,
+      "code": "def backoff_delays(n: int, base: float = 1.0, factor: float = 2.0, cap: float = 60.0) -> list[float]:\n    if n <= 0:\n        return []\n    delays = []\n    for i in range(n):\n        delay = base * (factor ** i)\n        delays.append(min(delay, cap))\n    return [float(d) for d in delays]"
+    },
+    {
+      "task": "t02_duration",
+      "worker": "deepseek/deepseek-chat",
+      "worker_vendor": "deepseek",
+      "judge": "google/gemini-2.5-flash",
+      "judge_vendor": "google",
+      "cross_vendor": true,
+      "gate": "TESTS-FAIL",
+      "tests": {
+        "passed": 11,
+        "total": 13,
+        "ok": false,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 2,
+        "robustness": 2,
+        "clarity": 3
+      },
+      "judge_reason": "Регулярное выражение для начальной проверки не соответствует спецификации, что приводит к некорректной обработке произвольного порядка единиц и избыточным проверкам.",
+      "cost_usd": 0.000645,
+      "code": "import re\n\ndef parse_duration(text: str) -> int:\n    if not text or not re.match(r'^(\\d+h)?(\\d+m)?(\\d+s)?$', text):\n        raise ValueError\n    hours = re.search(r'(\\d+)h', text)\n    minutes = re.search(r'(\\d+)m', text)\n    seconds = re.search(r'(\\d+)s', text)\n    total = 0\n    if hours:\n        total += int(hours.group(1)) * 3600\n    if minutes:\n        total += int(minutes.group(1)) * 60\n    if seconds:\n        total += int(seconds.group(1))\n    return total"
+    },
+    {
+      "task": "t03_backoff",
+      "worker": "deepseek/deepseek-chat",
+      "worker_vendor": "deepseek",
+      "judge": "google/gemini-2.5-flash",
+      "judge_vendor": "google",
+      "cross_vendor": true,
+      "gate": "APPROVED",
+      "tests": {
+        "passed": 6,
+        "total": 6,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 5,
+        "robustness": 4,
+        "clarity": 5
+      },
+      "judge_reason": "Код корректно реализует экспоненциальный backoff с учетом ограничения сверху и обрабатывает краевые случаи n <= 0.",
+      "cost_usd": 0.00056,
+      "code": "def backoff_delays(n: int, base: float = 1.0, factor: float = 2.0, cap: float = 60.0) -> list[float]:\n    if n <= 0:\n        return []\n    delays = []\n    current = base\n    for _ in range(n):\n        delays.append(min(current, cap))\n        current *= factor\n    return delays"
+    },
+    {
+      "task": "t02_duration",
+      "worker": "meta-llama/llama-3.3-70b-instruct",
+      "worker_vendor": "meta",
+      "judge": "google/gemini-2.5-flash",
+      "judge_vendor": "google",
+      "cross_vendor": true,
+      "gate": "JUDGE-REJECT",
+      "tests": {
+        "passed": 13,
+        "total": 13,
+        "ok": true,
+        "timeout": false
+      },
+      "judge_scores": {
+        "correctness": 4,
+        "robustness": 3,
+        "clarity": 3
+      },
+      "judge_reason": "Код в целом корректен, но имеет несколько мелких недочетов в обработке ошибок и читаемости.",
+      "cost_usd": 0.000517,
+      "code": "def parse_duration(text: str) -> int:\n    \"\"\"\n    Разбирает строку вида '1h30m', '90s', '2h', '45m', '1h2m3s' и возвращает количество секунд (int).\n    \n    :param text: Строка с длительностью\n    :return: Количество секунд\n    :raises ValueError: Если строка пустая или не соответствует формату\n    \"\"\"\n    if not text:\n        raise ValueError(\"Пустая строка\")\n\n    seconds = 0\n    i = 0\n    while i < len(text):\n        if not text[i].isdigit():\n            raise ValueError(\"Некорректный формат строки\")\n        j = i\n        while j < len(text) and text[j].isdigit():\n            j += 1\n        if j == len(text) or text[j] not in 'hms':\n            raise ValueError(\"Некорректный формат строки\")\n        num = int(text[i:j])\n        if text[j] == 'h':\n            seconds += num * 3600\n        elif text[j] == 'm':\n            seconds += num * 60\n        elif text[j] == 's':\n            seconds += num\n        i = j + 1\n\n    return seconds"
+    }
+  ]
+}
