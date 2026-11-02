@@ -1,0 +1,14 @@
+{
+  "id": "t03_backoff",
+  "title": "Экспоненциальный backoff",
+  "function_name": "backoff_delays",
+  "spec": "Написать функцию backoff_delays(n: int, base: float = 1.0, factor: float = 2.0, cap: float = 60.0) -> list[float], которая возвращает список из n задержек в секундах для повторных попыток: base, base*factor, base*factor^2 и т.д., где каждая задержка ограничена сверху значением cap. При n <= 0 вернуть пустой список. Аргументы base/factor/cap можно не проверять.",
+  "acceptance": [
+    "backoff_delays(3) == [1.0, 2.0, 4.0]",
+    "backoff_delays(3, base=0.5) == [0.5, 1.0, 2.0]",
+    "backoff_delays(5, cap=5.0) == [1.0, 2.0, 4.0, 5.0, 5.0] (потолок соблюдается)",
+    "backoff_delays(0) == [] и backoff_delays(-2) == []",
+    "Элементы списка — float, приведение обязательно"
+  ],
+  "min_score": 3.5
+}

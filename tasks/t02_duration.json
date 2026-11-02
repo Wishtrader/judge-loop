@@ -1,0 +1,15 @@
+{
+  "id": "t02_duration",
+  "title": "Парсер длительности",
+  "function_name": "parse_duration",
+  "spec": "Написать функцию parse_duration(text: str) -> int, которая разбирает строку вида '1h30m', '90s', '2h', '45m', '1h2m3s' и возвращает количество секунд (int). Поддерживаемые единицы: h (часы), m (минуты), s (секунды). Порядок единиц произвольный. Если строка пустая или не соответствует формату — поднять ValueError.",
+  "acceptance": [
+    "parse_duration('1h30m') == 5400",
+    "parse_duration('90s') == 90",
+    "parse_duration('2h') == 7200",
+    "parse_duration('1h2m3s') == 3723",
+    "parse_duration('30m2h') == 9000 (порядок произвольный: 2ч + 30м)",
+    "parse_duration('') и parse_duration('abc') поднимают ValueError"
+  ],
+  "min_score": 3.5
+}
